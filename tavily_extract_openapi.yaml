@@ -1,0 +1,53 @@
+openapi: 3.0.0
+info:
+  title: Tavily Extract Lloyds Credit Cards
+  version: 1.0.0
+servers:
+  - url: https://api.tavily.com
+paths:
+  /extract:
+    post:
+      summary: Extract content from Lloyds Bank credit card page
+      description: Extract detailed content from the Lloyds Bank Ultra credit card page
+      operationId: tavily_extract_lloyds
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - urls
+              properties:
+                urls:
+                  type: string
+                  description: The URL to extract content from
+                  default: "https://www.lloydsbank.com/credit-cards/ultra.html"
+                extract_depth:
+                  type: string
+                  enum: [basic, advanced]
+                  default: advanced
+                  description: Extraction depth - basic or advanced
+                format:
+                  type: string
+                  enum: [markdown, text]
+                  default: markdown
+                  description: Format of extracted content
+                include_images:
+                  type: boolean
+                  default: false
+                  description: Include images in extraction
+      responses:
+        '200':
+          description: Extraction results
+          content:
+            application/json:
+              schema:
+                type: object
+      security:
+        - BearerAuth: []
+components:
+  securitySchemes:
+    BearerAuth:
+      type: http
+      scheme: bearer

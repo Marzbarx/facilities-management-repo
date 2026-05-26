@@ -1,0 +1,740 @@
+openapi: 3.0.0
+info:
+  title: NHS ESR Integration API
+  description: |
+    Integration API for NHS Electronic Staff Record (ESR) system.
+    Provides read and write access to staff records, leave management, and absence tracking.
+
+    **Security:** All endpoints require OAuth 2.0 authentication with appropriate scopes.
+    **Rate Limiting:** 100 requests per minute per user.
+    **Audit:** All write operations are logged for compliance.
+  version: 1.0.0
+  contact:
+    name: NHS ESR Integration Support
+    email: esr-support@nhs.uk
+
+servers:
+  - url: https://esr-api.nhs.uk/v1
+    description: Production ESR API
+  - url: https://esr-api-test.nhs.uk/v1
+    description: Test ESR API
+
+security:
+  - OAuth2:
+      - read:staff
+      - write:staff
+      - read:leave
+      - write:leave
+      - read:absence
+      - write:absence
+
+paths:
+  /staff/{staffId}:
+    get:
+      summary: Read staff record
+      description: Retrieve complete staff record from ESR including personal details, employment details, and entitlements
+      operationId: esr_read_staff_record
+      tags:
+        - Staff Records
+      parameters:
+        - name: staffId
+          in: path
+          required: true
+          description: ESR staff ID (8-digit number)
+          schema:
+            type: string
+            pattern: '^\d{8}$'
+            example: "12345678"
+      responses:
+        "200":
+          description: Staff record retrieved successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/StaffRecord"
+        "404":
+          description: Staff record not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "401":
+          description: Unauthorized
+        "403":
+          description: Forbidden - insufficient permissions
+
+  /staff/{staffId}/personal-details:
+    put:
+      summary: Update staff personal details
+      description: Update personal information such as bank details, address, or emergency contacts
+      operationId: esr_update_staff_record
+      tags:
+        - Staff Records
+      parameters:
+        - name: staffId
+          in: path
+          required: true
+          schema:
+            type: string
+            pattern: '^\d{8}$'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/PersonalDetailsUpdate"
+      responses:
+        "200":
+          description: Personal details updated successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/UpdateResponse"
+        "400":
+          description: Invalid request data
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "404":
+          description: Staff record not found
+
+  /staff/{staffId}/leave/entitlement:
+    get:
+      summary: Check leave entitlement
+      description: Get current leave entitlement, used days, and remaining balance
+      operationId: esr_check_leave_entitlement
+      tags:
+        - Leave Management
+      parameters:
+        - name: staffId
+          in: path
+          required: true
+          schema:
+            type: string
+            pattern: '^\d{8}$'
+        - name: leaveYear
+          in: query
+          required: false
+          description: Leave year (defaults to current)
+          schema:
+            type: string
+            pattern: '^\d{4}$'
+            example: "2026"
+      responses:
+        "200":
+          description: Leave entitlement retrieved
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/LeaveEntitlement"
+
+  /staff/{staffId}/leave/request:
+    post:
+      summary: Submit leave request
+      description: Create a new leave request for manager approval
+      operationId: esr_submit_leave_request
+      tags:
+        - Leave Management
+      parameters:
+        - name: staffId
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/LeaveRequest"
+      responses:
+        "201":
+          description: Leave request created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/LeaveRequestResponse"
+        "400":
+          description: Invalid request (e.g., insufficient entitlement)
+
+  /staff/{staffId}/leave/balance:
+    put:
+      summary: Update leave balance
+      description: Deduct or add leave days (used after approval)
+      operationId: esr_update_leave_balance
+      tags:
+        - Leave Management
+      parameters:
+        - name: staffId
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/LeaveBalanceUpdate"
+      responses:
+        "200":
+          description: Leave balance updated
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/UpdateResponse"
+
+  /department/{departmentId}/staffing:
+    get:
+      summary: Check staffing levels
+      description: Get current and projected staffing levels for a department/ward
+      operationId: esr_check_staffing_levels
+      tags:
+        - Staffing
+      parameters:
+        - name: departmentId
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: startDate
+          in: query
+          required: true
+          schema:
+            type: string
+            format: date
+        - name: endDate
+          in: query
+          required: true
+          schema:
+            type: string
+            format: date
+      responses:
+        "200":
+          description: Staffing levels retrieved
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/StaffingLevels"
+
+  /staff/{staffId}/absence:
+    post:
+      summary: Record absence
+      description: Create a new sickness absence record
+      operationId: esr_record_absence
+      tags:
+        - Absence Management
+      parameters:
+        - name: staffId
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/AbsenceRecord"
+      responses:
+        "201":
+          description: Absence recorded
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AbsenceResponse"
+
+  /staff/{staffId}/absence/{absenceId}/return:
+    put:
+      summary: Record return to work
+      description: Close an absence record with return date
+      operationId: esr_record_return
+      tags:
+        - Absence Management
+      parameters:
+        - name: staffId
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: absenceId
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ReturnToWork"
+      responses:
+        "200":
+          description: Return to work recorded
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/UpdateResponse"
+
+  /staff/{staffId}/absence/history:
+    get:
+      summary: Get absence history
+      description: Retrieve absence history for Bradford Factor calculation
+      operationId: esr_get_absence_history
+      tags:
+        - Absence Management
+      parameters:
+        - name: staffId
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: periodMonths
+          in: query
+          required: false
+          description: Number of months to look back (default 12)
+          schema:
+            type: integer
+            default: 12
+      responses:
+        "200":
+          description: Absence history retrieved
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AbsenceHistory"
+
+components:
+  securitySchemes:
+    OAuth2:
+      type: oauth2
+      flows:
+        authorizationCode:
+          authorizationUrl: https://auth.nhs.uk/oauth/authorize
+          tokenUrl: https://auth.nhs.uk/oauth/token
+          scopes:
+            read:staff: Read staff records
+            write:staff: Update staff records
+            read:leave: Read leave information
+            write:leave: Manage leave requests
+            read:absence: Read absence records
+            write:absence: Manage absence records
+
+  schemas:
+    StaffRecord:
+      type: object
+      properties:
+        staffId:
+          type: string
+          example: "12345678"
+        personalDetails:
+          $ref: "#/components/schemas/PersonalDetails"
+        employmentDetails:
+          $ref: "#/components/schemas/EmploymentDetails"
+        leaveEntitlement:
+          $ref: "#/components/schemas/LeaveEntitlement"
+        absenceSummary:
+          $ref: "#/components/schemas/AbsenceSummary"
+
+    PersonalDetails:
+      type: object
+      properties:
+        firstName:
+          type: string
+          example: "Sarah"
+        lastName:
+          type: string
+          example: "Chen"
+        dateOfBirth:
+          type: string
+          format: date
+        nhsNumber:
+          type: string
+          example: "123 456 7890"
+        bankDetails:
+          $ref: "#/components/schemas/BankDetails"
+        address:
+          $ref: "#/components/schemas/Address"
+        contactDetails:
+          $ref: "#/components/schemas/ContactDetails"
+        emergencyContact:
+          $ref: "#/components/schemas/EmergencyContact"
+
+    BankDetails:
+      type: object
+      properties:
+        accountNumber:
+          type: string
+          example: "12345678"
+        sortCode:
+          type: string
+          example: "12-34-56"
+        accountHolderName:
+          type: string
+          example: "Sarah Chen"
+        buildingSocietyRollNumber:
+          type: string
+          nullable: true
+
+    Address:
+      type: object
+      properties:
+        line1:
+          type: string
+          example: "15 Oak Street"
+        line2:
+          type: string
+          nullable: true
+        city:
+          type: string
+          example: "Hertford"
+        county:
+          type: string
+          example: "Hertfordshire"
+        postcode:
+          type: string
+          example: "SG13 7AB"
+
+    ContactDetails:
+      type: object
+      properties:
+        mobilePhone:
+          type: string
+          example: "07700 900123"
+        homePhone:
+          type: string
+          nullable: true
+        personalEmail:
+          type: string
+          example: "sarah.chen@email.com"
+        workEmail:
+          type: string
+          example: "sarah.chen@nhs.net"
+
+    EmergencyContact:
+      type: object
+      properties:
+        name:
+          type: string
+          example: "John Chen"
+        relationship:
+          type: string
+          example: "Spouse"
+        phoneNumber:
+          type: string
+          example: "07700 900456"
+        alternativePhone:
+          type: string
+          nullable: true
+
+    EmploymentDetails:
+      type: object
+      properties:
+        band:
+          type: string
+          example: "Band 5"
+        jobTitle:
+          type: string
+          example: "Staff Nurse"
+        department:
+          type: string
+          example: "Ward 4B"
+        departmentId:
+          type: string
+          example: "W4B"
+        managerId:
+          type: string
+          example: "87654321"
+        managerName:
+          type: string
+          example: "James Mitchell"
+        startDate:
+          type: string
+          format: date
+        contractType:
+          type: string
+          enum: [permanent, fixed-term, bank, agency]
+        fte:
+          type: number
+          format: float
+          example: 1.0
+          description: Full-time equivalent (1.0 = full-time)
+
+    LeaveEntitlement:
+      type: object
+      properties:
+        leaveYear:
+          type: string
+          example: "2026"
+        annualEntitlement:
+          type: number
+          example: 27
+        carriedOver:
+          type: number
+          example: 3
+        totalEntitlement:
+          type: number
+          example: 30
+        used:
+          type: number
+          example: 8
+        pending:
+          type: number
+          example: 5
+        remaining:
+          type: number
+          example: 17
+
+    PersonalDetailsUpdate:
+      type: object
+      properties:
+        updateType:
+          type: string
+          enum: [bank, address, emergency_contact, contact_details]
+        bankDetails:
+          $ref: "#/components/schemas/BankDetails"
+        address:
+          $ref: "#/components/schemas/Address"
+        emergencyContact:
+          $ref: "#/components/schemas/EmergencyContact"
+        contactDetails:
+          $ref: "#/components/schemas/ContactDetails"
+        verificationCode:
+          type: string
+          description: 2FA code for sensitive updates
+
+    LeaveRequest:
+      type: object
+      required:
+        - startDate
+        - endDate
+        - leaveType
+      properties:
+        startDate:
+          type: string
+          format: date
+        endDate:
+          type: string
+          format: date
+        leaveType:
+          type: string
+          enum: [annual, carried_over, study, special]
+        workingDays:
+          type: number
+          description: Number of working days
+        reason:
+          type: string
+          nullable: true
+
+    LeaveRequestResponse:
+      type: object
+      properties:
+        requestId:
+          type: string
+          example: "AL-2026-05-19-0849"
+        status:
+          type: string
+          enum: [pending, approved, declined]
+        submittedAt:
+          type: string
+          format: date-time
+        managerId:
+          type: string
+
+    LeaveBalanceUpdate:
+      type: object
+      properties:
+        requestId:
+          type: string
+        workingDays:
+          type: number
+        operation:
+          type: string
+          enum: [deduct, add]
+        reason:
+          type: string
+
+    StaffingLevels:
+      type: object
+      properties:
+        departmentId:
+          type: string
+        departmentName:
+          type: string
+        dateRange:
+          type: object
+          properties:
+            start:
+              type: string
+              format: date
+            end:
+              type: string
+              format: date
+        minimumRequired:
+          type: integer
+        dailyLevels:
+          type: array
+          items:
+            type: object
+            properties:
+              date:
+                type: string
+                format: date
+              scheduled:
+                type: integer
+              onLeave:
+                type: integer
+              available:
+                type: integer
+              status:
+                type: string
+                enum: [adequate, low, critical]
+
+    AbsenceRecord:
+      type: object
+      required:
+        - startDate
+        - reason
+      properties:
+        startDate:
+          type: string
+          format: date
+        expectedReturnDate:
+          type: string
+          format: date
+          nullable: true
+        reason:
+          type: string
+          enum:
+            [sickness, work_injury, stress, musculoskeletal, infection, other]
+        reasonDetail:
+          type: string
+          nullable: true
+        workRelated:
+          type: boolean
+          default: false
+        selfCertification:
+          type: boolean
+          default: true
+
+    AbsenceResponse:
+      type: object
+      properties:
+        absenceId:
+          type: string
+          example: "SA-2026-05-19-0851"
+        staffId:
+          type: string
+        startDate:
+          type: string
+          format: date
+        status:
+          type: string
+          enum: [open, closed]
+        recordedAt:
+          type: string
+          format: date-time
+
+    ReturnToWork:
+      type: object
+      required:
+        - returnDate
+        - wellnessStatus
+      properties:
+        returnDate:
+          type: string
+          format: date
+        wellnessStatus:
+          type: string
+          enum: [fully_recovered, ongoing_symptoms, needs_adjustments]
+        ongoingSymptoms:
+          type: string
+          nullable: true
+        adjustmentsNeeded:
+          type: string
+          nullable: true
+
+    AbsenceHistory:
+      type: object
+      properties:
+        staffId:
+          type: string
+        periodMonths:
+          type: integer
+        episodes:
+          type: integer
+          description: Number of absence episodes
+        totalDays:
+          type: integer
+          description: Total days absent
+        bradfordFactor:
+          type: integer
+          description: Calculated Bradford Factor score
+        absences:
+          type: array
+          items:
+            type: object
+            properties:
+              absenceId:
+                type: string
+              startDate:
+                type: string
+                format: date
+              endDate:
+                type: string
+                format: date
+              days:
+                type: integer
+              reason:
+                type: string
+
+    AbsenceSummary:
+      type: object
+      properties:
+        currentYear:
+          type: object
+          properties:
+            episodes:
+              type: integer
+            totalDays:
+              type: integer
+            bradfordFactor:
+              type: integer
+        last12Months:
+          type: object
+          properties:
+            episodes:
+              type: integer
+            totalDays:
+              type: integer
+            bradfordFactor:
+              type: integer
+
+    UpdateResponse:
+      type: object
+      properties:
+        success:
+          type: boolean
+        message:
+          type: string
+        referenceNumber:
+          type: string
+        timestamp:
+          type: string
+          format: date-time
+
+    Error:
+      type: object
+      properties:
+        error:
+          type: string
+        message:
+          type: string
+        code:
+          type: string
+        timestamp:
+          type: string
+          format: date-time
+
+# Made with Bob

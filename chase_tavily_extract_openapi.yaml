@@ -1,0 +1,47 @@
+openapi: 3.1.0
+info:
+  title: Tavily Extract
+  version: 1.0.0
+  description: Tool to extract Chase Bank credit card page content
+
+servers:
+  - url: https://api.tavily.com
+
+paths:
+  /extract:
+    post:
+      summary: "Extract content from Chase Bank credit cards page"
+      description: "Retrieve relevant text and metadata from the Chase credit cards listing."
+      operationId: extractChaseCreditCards
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [urls]
+              properties:
+                urls:
+                  oneOf:
+                    - type: string
+                      format: uri
+                    - type: array
+                      maxItems: 20
+                      items:
+                        type: string
+                        format: uri
+      responses:
+        "200":
+          description: "Successful extraction"
+          content:
+            application/json:
+              schema:
+                type: object
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: TavilyAPIKey
+security:
+  - bearerAuth: []

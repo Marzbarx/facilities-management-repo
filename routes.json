@@ -1,0 +1,5 @@
+{
+  "/work_orders?coordinator_id=:coordinator_id": "/work_orders?coordinator_id=:coordinator_id",
+  "/asset_inventory?Asset_Tag=:Asset_Tag": "/asset_inventory?Asset_Tag=:Asset_Tag",
+  "/vendor_database?Specialty=:Specialty": "/vendor_database?Specialty=:Specialty"
+}

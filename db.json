@@ -1,0 +1,470 @@
+{
+  "work_orders": [
+    {
+      "id": "1",
+      "coordinator_id": "KW-05",
+      "employee_id": "EMP-001",
+      "Asset_Tag": "CM-F3-01",
+      "Vendor_ID": "V-001",
+      "Status": "Open",
+      "Priority": "Low",
+      "Assignee_ID": "TECH-01",
+      "Description": "Coffee machine in break room not working",
+      "Comments": "Reported by employee, needs immediate attention"
+    },
+    {
+      "id": "2",
+      "coordinator_id": "KW-05",
+      "employee_id": "EMP-002",
+      "Asset_Tag": "HVAC-B2-01",
+      "Vendor_ID": "V-002",
+      "Status": "In Progress",
+      "Priority": "Medium",
+      "Assignee_ID": "TECH-02",
+      "Description": "HVAC system making unusual noise",
+      "Comments": "Scheduled for inspection tomorrow"
+    },
+    {
+      "id": "3",
+      "coordinator_id": "KW-05",
+      "employee_id": "EMP-003",
+      "Asset_Tag": "LIGHT-F2-CR",
+      "Vendor_ID": "V-005",
+      "Status": "Completed",
+      "Priority": "Low",
+      "Assignee_ID": "TECH-01",
+      "Description": "Replace light bulbs in conference room",
+      "Comments": "Completed on 2026-03-30"
+    },
+    {
+      "id": "4",
+      "coordinator_id": "KW-06",
+      "employee_id": "EMP-004",
+      "Asset_Tag": "PLUMB-F1-RR",
+      "Vendor_ID": "V-006",
+      "Status": "Open",
+      "Priority": "High",
+      "Assignee_ID": "TECH-03",
+      "Description": "Water leak in restroom",
+      "Comments": "Emergency repair needed"
+    },
+    {
+      "id": "5",
+      "coordinator_id": "KW-07",
+      "employee_id": "EMP-005",
+      "Asset_Tag": "ELEV-B1-01",
+      "Vendor_ID": "V-007",
+      "Status": "Open",
+      "Priority": "Medium",
+      "Assignee_ID": "TECH-04",
+      "Description": "Elevator maintenance required",
+      "Comments": "Annual inspection due"
+    },
+    {
+      "id": "6",
+      "coordinator_id": "KW-08",
+      "employee_id": "EMP-001",
+      "Asset_Tag": "SEC-CAM-ME",
+      "Vendor_ID": "V-008",
+      "Status": "In Progress",
+      "Priority": "High",
+      "Assignee_ID": "TECH-05",
+      "Description": "Security camera system malfunction",
+      "Comments": "Technician on site"
+    },
+    {
+      "id": "7",
+      "coordinator_id": "KW-09",
+      "employee_id": "EMP-003",
+      "Asset_Tag": "PAINT-F1-LB",
+      "Vendor_ID": "V-009",
+      "Status": "Scheduled",
+      "Priority": "High",
+      "Assignee_ID": "EMP-05",
+      "Description": "Paint touch-up needed in lobby",
+      "Comments": "Scheduled together with work order 14 for combined paint and carpet work to optimize resources."
+    },
+    {
+      "id": "8",
+      "coordinator_id": "KW-06",
+      "employee_id": "EMP-002",
+      "Asset_Tag": "HVAC-B3-02",
+      "Vendor_ID": "V-002",
+      "Status": "Open",
+      "Priority": "P1",
+      "Assignee_ID": "BUILD-ENG-01",
+      "Description": "Temperature control issue in server room",
+      "Comments": "Room temperature exceeding safe limits"
+    },
+    {
+      "id": "9",
+      "coordinator_id": "KW-06",
+      "employee_id": "EMP-005",
+      "Asset_Tag": "DOOR-F2-ME",
+      "Vendor_ID": "V-010",
+      "Status": "In Progress",
+      "Priority": "Medium",
+      "Assignee_ID": "TECH-03",
+      "Description": "Automatic door sensor not responding",
+      "Comments": "Parts ordered, awaiting delivery"
+    },
+    {
+      "id": "10",
+      "coordinator_id": "KW-07",
+      "employee_id": "EMP-001",
+      "Asset_Tag": "AC-F4-01",
+      "Vendor_ID": "V-002",
+      "Status": "Open",
+      "Priority": "Low",
+      "Assignee_ID": "TECH-02",
+      "Description": "Air conditioning filter replacement needed",
+      "Comments": "Routine maintenance scheduled"
+    },
+    {
+      "id": "11",
+      "coordinator_id": "KW-07",
+      "employee_id": "EMP-003",
+      "Asset_Tag": "FIRE-B1-01",
+      "Vendor_ID": "V-011",
+      "Status": "Resolved",
+      "Priority": "High",
+      "Assignee_ID": "TECH-04",
+      "Description": "Fire alarm system quarterly inspection",
+      "Comments": "Fire alarm inspection completed. Uploaded compliance documentation: inspection report, test logs, and certification. All systems operational."
+    },
+    {
+      "id": "12",
+      "coordinator_id": "KW-08",
+      "employee_id": "EMP-004",
+      "Asset_Tag": "LOCK-F3-05",
+      "Vendor_ID": "V-010",
+      "Status": "Open",
+      "Priority": "High",
+      "Assignee_ID": "TECH-05",
+      "Description": "Electronic lock malfunction on storage room",
+      "Comments": "Unable to access room, urgent"
+    },
+    {
+      "id": "13",
+      "coordinator_id": "KW-08",
+      "employee_id": "EMP-002",
+      "Asset_Tag": "ALARM-B1-SYS",
+      "Vendor_ID": "V-008",
+      "Status": "Open",
+      "Priority": "Medium",
+      "Assignee_ID": "TECH-05",
+      "Description": "Intrusion alarm false triggers",
+      "Comments": "Multiple false alarms reported this week"
+    },
+    {
+      "id": "14",
+      "coordinator_id": "KW-09",
+      "employee_id": "EMP-005",
+      "Asset_Tag": "CARPET-F2-HL",
+      "Vendor_ID": "V-012",
+      "Status": "Scheduled",
+      "Priority": "High",
+      "Assignee_ID": "EMP-05",
+      "Description": "Carpet cleaning required in hallway",
+      "Comments": "Scheduled together with work order 7 for combined carpet and paint work to optimize resources."
+    },
+    {
+      "id": "15",
+      "coordinator_id": "KW-09",
+      "employee_id": "EMP-001",
+      "Asset_Tag": "WINDOW-F3-EX",
+      "Vendor_ID": "V-013",
+      "Status": "In Progress",
+      "Priority": "Medium",
+      "Assignee_ID": "TECH-08",
+      "Description": "Window cleaning for exterior glass",
+      "Comments": "Weather permitting, crew scheduled for tomorrow"
+    }
+  ],
+  "asset_inventory": [
+    {
+      "Asset_Tag": "CM-F3-01",
+      "Asset_Type": "Coffee Machine",
+      "Model": "Breville BES870XL",
+      "Purchase_Date": "2024-01-15",
+      "Warranty_Expiry": "2026-01-15",
+      "Status": "Operational",
+      "id": "_LyGmibqruc"
+    },
+    {
+      "Asset_Tag": "HVAC-B2-01",
+      "Asset_Type": "HVAC System",
+      "Model": "Carrier 24ACC6",
+      "Purchase_Date": "2023-06-10",
+      "Warranty_Expiry": "2028-06-10",
+      "Status": "Needs Maintenance",
+      "id": "SPgsgRGvHKk"
+    },
+    {
+      "Asset_Tag": "DESK-F1-12",
+      "Asset_Type": "Office Desk",
+      "Model": "Steelcase Series 7",
+      "Purchase_Date": "2024-03-20",
+      "Warranty_Expiry": "2029-03-20",
+      "Status": "Operational",
+      "id": "jdgXrWP8gK4"
+    },
+    {
+      "Asset_Tag": "PRINTER-F2-05",
+      "Asset_Type": "Printer",
+      "Model": "HP LaserJet Pro M404n",
+      "Purchase_Date": "2024-02-01",
+      "Warranty_Expiry": "2027-02-01",
+      "Status": "Operational",
+      "id": "5G2pXjNHPZk"
+    },
+    {
+      "Asset_Tag": "LIGHT-F2-CR",
+      "Asset_Type": "Lighting System",
+      "Model": "Philips LED Panel 600x600",
+      "Purchase_Date": "2023-08-15",
+      "Warranty_Expiry": "2028-08-15",
+      "Status": "Operational",
+      "id": "kL9mNpQ2rSt"
+    },
+    {
+      "Asset_Tag": "PLUMB-F1-RR",
+      "Asset_Type": "Plumbing System",
+      "Model": "Standard Restroom Fixtures",
+      "Purchase_Date": "2022-05-10",
+      "Warranty_Expiry": "2027-05-10",
+      "Status": "Needs Repair",
+      "id": "uV3wXyZ4aBc"
+    },
+    {
+      "Asset_Tag": "ELEV-B1-01",
+      "Asset_Type": "Elevator",
+      "Model": "Otis Gen2",
+      "Purchase_Date": "2020-03-01",
+      "Warranty_Expiry": "2030-03-01",
+      "Status": "Operational",
+      "id": "dE5fGhI6jKl"
+    },
+    {
+      "Asset_Tag": "SEC-CAM-ME",
+      "Asset_Type": "Security Camera System",
+      "Model": "Hikvision DS-2CD2385G1",
+      "Purchase_Date": "2023-11-20",
+      "Warranty_Expiry": "2026-11-20",
+      "Status": "Needs Maintenance",
+      "id": "mN7oP8qRsTu"
+    },
+    {
+      "Asset_Tag": "PAINT-F1-LB",
+      "Asset_Type": "Interior Finishes",
+      "Model": "Sherwin-Williams ProMar 200",
+      "Purchase_Date": "2023-01-10",
+      "Warranty_Expiry": "2025-01-10",
+      "Status": "Operational",
+      "id": "vW9xYzA1bCd"
+    },
+    {
+      "Asset_Tag": "HVAC-B3-02",
+      "Asset_Type": "HVAC System",
+      "Model": "Trane XR16",
+      "Purchase_Date": "2022-09-15",
+      "Warranty_Expiry": "2027-09-15",
+      "Status": "Operational",
+      "id": "aB2cD3eF4gH"
+    },
+    {
+      "Asset_Tag": "DOOR-F2-ME",
+      "Asset_Type": "Automatic Door System",
+      "Model": "Stanley Magic-Force",
+      "Purchase_Date": "2023-04-20",
+      "Warranty_Expiry": "2028-04-20",
+      "Status": "Needs Repair",
+      "id": "iJ5kL6mN7oP"
+    },
+    {
+      "Asset_Tag": "AC-F4-01",
+      "Asset_Type": "Air Conditioning Unit",
+      "Model": "Daikin FTXS35K",
+      "Purchase_Date": "2023-07-10",
+      "Warranty_Expiry": "2028-07-10",
+      "Status": "Operational",
+      "id": "qR8sT9uV0wX"
+    },
+    {
+      "Asset_Tag": "FIRE-B1-01",
+      "Asset_Type": "Fire Alarm System",
+      "Model": "Honeywell FACP",
+      "Purchase_Date": "2021-02-15",
+      "Warranty_Expiry": "2031-02-15",
+      "Status": "Operational",
+      "id": "yZ1aB2cD3eF"
+    },
+    {
+      "Asset_Tag": "LOCK-F3-05",
+      "Asset_Type": "Electronic Lock System",
+      "Model": "Schlage NDE Series",
+      "Purchase_Date": "2023-10-05",
+      "Warranty_Expiry": "2028-10-05",
+      "Status": "Needs Repair",
+      "id": "gH4iJ5kL6mN"
+    },
+    {
+      "Asset_Tag": "ALARM-B1-SYS",
+      "Asset_Type": "Intrusion Alarm System",
+      "Model": "Bosch B Series",
+      "Purchase_Date": "2022-12-01",
+      "Warranty_Expiry": "2027-12-01",
+      "Status": "Needs Maintenance",
+      "id": "oP7qR8sT9uV"
+    },
+    {
+      "Asset_Tag": "CARPET-F2-HL",
+      "Asset_Type": "Flooring",
+      "Model": "Commercial Grade Carpet Tiles",
+      "Purchase_Date": "2022-03-15",
+      "Warranty_Expiry": "2027-03-15",
+      "Status": "Operational",
+      "id": "wX0yZ1aB2cD"
+    },
+    {
+      "Asset_Tag": "WINDOW-F3-EX",
+      "Asset_Type": "Exterior Windows",
+      "Model": "Commercial Double-Pane Glass",
+      "Purchase_Date": "2020-06-01",
+      "Warranty_Expiry": "2030-06-01",
+      "Status": "Operational",
+      "id": "eF3gH4iJ5kL"
+    }
+  ],
+  "vendor_database": [
+    {
+      "Vendor_ID": "V-001",
+      "Vendor_Name": "Coffee Solutions Inc",
+      "Specialty": "Coffee Machine",
+      "Contact": "support@coffeesolutions.com",
+      "id": "o-2ul7LsdH8"
+    },
+    {
+      "Vendor_ID": "V-002",
+      "Vendor_Name": "Climate Control Experts",
+      "Specialty": "HVAC System",
+      "Contact": "service@climatecontrol.com",
+      "id": "Tim36CrBKhM"
+    },
+    {
+      "Vendor_ID": "V-003",
+      "Vendor_Name": "Office Furniture Pro",
+      "Specialty": "Office Desk",
+      "Contact": "sales@officefurniturepro.com",
+      "id": "cyNKXgw42sI"
+    },
+    {
+      "Vendor_ID": "V-004",
+      "Vendor_Name": "Tech Print Services",
+      "Specialty": "Printer",
+      "Contact": "support@techprint.com",
+      "id": "NZoXPdkZj9U"
+    },
+    {
+      "Vendor_ID": "V-005",
+      "Vendor_Name": "Bright Light Solutions",
+      "Specialty": "Lighting System",
+      "Contact": "service@brightlight.com",
+      "id": "eF1gH2iJ3kL"
+    },
+    {
+      "Vendor_ID": "V-006",
+      "Vendor_Name": "Pro Plumbing Services",
+      "Specialty": "Plumbing System",
+      "Contact": "emergency@proplumbing.com",
+      "id": "mN4oP5qR6sT"
+    },
+    {
+      "Vendor_ID": "V-007",
+      "Vendor_Name": "Elevator Maintenance Corp",
+      "Specialty": "Elevator",
+      "Contact": "service@elevatormc.com",
+      "id": "uV7wX8yZ9aB"
+    },
+    {
+      "Vendor_ID": "V-008",
+      "Vendor_Name": "SecureTech Systems",
+      "Specialty": "Security Camera System",
+      "Contact": "support@securetech.com",
+      "id": "cD0eF1gH2iJ"
+    },
+    {
+      "Vendor_ID": "V-009",
+      "Vendor_Name": "Premier Painting Co",
+      "Specialty": "Interior Finishes",
+      "Contact": "quotes@premierpainting.com",
+      "id": "kL3mN4oP5qR"
+    },
+    {
+      "Vendor_ID": "V-010",
+      "Vendor_Name": "Access Control Solutions",
+      "Specialty": "Automatic Door System",
+      "Contact": "service@accesscontrol.com",
+      "id": "sT6uV7wX8yZ"
+    },
+    {
+      "Vendor_ID": "V-011",
+      "Vendor_Name": "Fire Safety Systems Inc",
+      "Specialty": "Fire Alarm System",
+      "Contact": "inspections@firesafety.com",
+      "id": "aB9cD0eF1gH"
+    },
+    {
+      "Vendor_ID": "V-012",
+      "Vendor_Name": "Clean Pro Services",
+      "Specialty": "Flooring",
+      "Contact": "bookings@cleanpro.com",
+      "id": "iJ2kL3mN4oP"
+    },
+    {
+      "Vendor_ID": "V-013",
+      "Vendor_Name": "Crystal Clear Window Cleaning",
+      "Specialty": "Exterior Windows",
+      "Contact": "schedule@crystalclear.com",
+      "id": "qR5sT6uV7wX"
+    }
+  ],
+  "employees": [
+    {
+      "employee_id": "EMP-001",
+      "FullName": "John Smith",
+      "Email": "john.smith@company.com",
+      "Department": "Engineering",
+      "id": "ttarZdiaW60"
+    },
+    {
+      "employee_id": "EMP-002",
+      "FullName": "Sarah Johnson",
+      "Email": "sarah.johnson@company.com",
+      "Department": "Marketing",
+      "id": "vwEPjZPQNjg"
+    },
+    {
+      "employee_id": "EMP-003",
+      "FullName": "Michael Brown",
+      "Email": "michael.brown@company.com",
+      "Department": "Sales",
+      "id": "VF9NlyxbTJU"
+    },
+    {
+      "employee_id": "EMP-004",
+      "FullName": "Emily Davis",
+      "Email": "emily.davis@company.com",
+      "Department": "Human Resources",
+      "id": "E6AW3jvsllI"
+    },
+    {
+      "employee_id": "EMP-005",
+      "FullName": "David Wilson",
+      "Email": "david.wilson@company.com",
+      "Department": "Finance",
+      "id": "fLWEc6SIRRo"
+    }
+  ],
+  "$schema": "./node_modules/json-server/schema.json"
+}

@@ -1,0 +1,66 @@
+openapi: 3.0.3
+info:
+  title: Banking Card Support API
+  description: API used by the AI banking assistant to handle lost or stolen card reports, block cards, and order replacements.
+  version: "1.0.0"
+
+servers:
+  - url: https://kayden-incursive-jann.ngrok-free.dev
+    description: Mock API endpoint exposed via ngrok
+
+paths:
+  /report-lost-or-stolen:
+    post:
+      summary: Report a lost or stolen card and optionally order a replacement
+      operationId: reportLostOrStolenCard
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                card_type:
+                  type: string
+
+                issue_type:
+                  type: string
+
+                customer_email:
+                  type: string
+
+                pin_verification:
+                  type: string
+
+                replacement_requested:
+                  type: string
+
+                saved_address_confirmation:
+                  type: string
+                  description: Whether the replacement card should be sent to the saved address or an updated address
+
+      responses:
+        "200":
+          description: Result of the lost or stolen card handling process
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  card_status:
+                    type: string
+
+                  security_action:
+                    type: string
+
+                  saved_address:
+                    type: string
+
+                  replacement_status:
+                    type: string
+
+                  delivery_timeframe:
+                    type: string
+
+                  support_reference_id:
+                    type: string

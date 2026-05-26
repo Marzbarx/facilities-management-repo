@@ -1,0 +1,662 @@
+openapi: 3.0.0
+info:
+  title: NHS HR Utility Tools API
+  description: |
+    Utility tools for NHS HR transaction processing including validation,
+    notifications, audit logging, and calculations.
+  version: 1.0.0
+
+servers:
+  - url: https://hr-utils.nhs.uk/v1
+    description: Production utilities API
+
+paths:
+  /validate/uk-sort-code:
+    post:
+      summary: Validate UK bank sort code
+      description: Verify that a UK bank sort code is valid and active
+      operationId: validate_uk_sort_code
+      tags:
+        - Validation
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - sortCode
+              properties:
+                sortCode:
+                  type: string
+                  pattern: '^\d{2}-\d{2}-\d{2}$'
+                  example: "12-34-56"
+      responses:
+        "200":
+          description: Validation result
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  valid:
+                    type: boolean
+                  bankName:
+                    type: string
+                    example: "Barclays Bank"
+                  branchName:
+                    type: string
+                    nullable: true
+
+  /validate/uk-postcode:
+    post:
+      summary: Validate UK postcode
+      description: Verify UK postcode format and optionally lookup address
+      operationId: validate_uk_postcode
+      tags:
+        - Validation
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - postcode
+              properties:
+                postcode:
+                  type: string
+                  example: "SG13 7AB"
+                lookupAddress:
+                  type: boolean
+                  default: false
+      responses:
+        "200":
+          description: Validation result
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  valid:
+                    type: boolean
+                  formatted:
+                    type: string
+                    example: "SG13 7AB"
+                  region:
+                    type: string
+                    example: "Hertfordshire"
+                  addresses:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        line1:
+                          type: string
+                        line2:
+                          type: string
+                        city:
+                          type: string
+
+  /calculate/working-days:
+    post:
+      summary: Calculate working days between dates
+      description: Calculate number of working days excluding weekends and bank holidays
+      operationId: calculate_working_days
+      tags:
+        - Calculations
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - startDate
+                - endDate
+              properties:
+                startDate:
+                  type: string
+                  format: date
+                endDate:
+                  type: string
+                  format: date
+                excludeBankHolidays:
+                  type: boolean
+                  default: true
+      responses:
+        "200":
+          description: Working days calculated
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  workingDays:
+                    type: integer
+                  calendarDays:
+                    type: integer
+                  weekendDays:
+                    type: integer
+                  bankHolidays:
+                    type: integer
+                  bankHolidayDates:
+                    type: array
+                    items:
+                      type: string
+                      format: date
+
+  /calculate/bradford-factor:
+    post:
+      summary: Calculate Bradford Factor score
+      description: Calculate Bradford Factor from absence history (B = S² × D)
+      operationId: calculate_bradford_factor
+      tags:
+        - Calculations
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - episodes
+                - totalDays
+              properties:
+                episodes:
+                  type: integer
+                  description: Number of absence episodes
+                  example: 3
+                totalDays:
+                  type: integer
+                  description: Total days absent
+                  example: 10
+      responses:
+        "200":
+          description: Bradford Factor calculated
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  bradfordFactor:
+                    type: integer
+                    example: 90
+                  triggerLevel:
+                    type: string
+                    enum:
+                      [
+                        none,
+                        informal,
+                        written_warning,
+                        final_warning,
+                        dismissal,
+                      ]
+                    example: "none"
+                  actionRequired:
+                    type: string
+                    example: "No action required"
+
+  /notifications/email:
+    post:
+      summary: Send email notification
+      description: Send email to staff, managers, or HR
+      operationId: send_email_notification
+      tags:
+        - Notifications
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - to
+                - subject
+                - body
+              properties:
+                to:
+                  type: array
+                  items:
+                    type: string
+                    format: email
+                  example: ["sarah.chen@nhs.net"]
+                cc:
+                  type: array
+                  items:
+                    type: string
+                    format: email
+                subject:
+                  type: string
+                  example: "Leave Request Approved"
+                body:
+                  type: string
+                templateId:
+                  type: string
+                  description: Use predefined template
+                  nullable: true
+                templateData:
+                  type: object
+                  description: Data for template
+                  nullable: true
+                priority:
+                  type: string
+                  enum: [low, normal, high]
+                  default: normal
+      responses:
+        "200":
+          description: Email sent successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  messageId:
+                    type: string
+                  sentAt:
+                    type: string
+                    format: date-time
+
+  /notifications/teams:
+    post:
+      summary: Send Microsoft Teams notification
+      description: Send notification via Teams bot
+      operationId: send_teams_notification
+      tags:
+        - Notifications
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - userId
+                - message
+              properties:
+                userId:
+                  type: string
+                  description: Teams user ID or email
+                message:
+                  type: string
+                title:
+                  type: string
+                  nullable: true
+                actionButtons:
+                  type: array
+                  items:
+                    type: object
+                    properties:
+                      label:
+                        type: string
+                      action:
+                        type: string
+                      data:
+                        type: object
+      responses:
+        "200":
+          description: Teams notification sent
+
+  /notifications/sms:
+    post:
+      summary: Send SMS notification
+      description: Send SMS for urgent notifications (2FA, etc.)
+      operationId: send_sms_notification
+      tags:
+        - Notifications
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - phoneNumber
+                - message
+              properties:
+                phoneNumber:
+                  type: string
+                  pattern: '^07\d{9}$'
+                  example: "07700900123"
+                message:
+                  type: string
+                  maxLength: 160
+      responses:
+        "200":
+          description: SMS sent successfully
+
+  /verification/send-code:
+    post:
+      summary: Send verification code
+      description: Send 2FA code via SMS or email
+      operationId: send_verification_code
+      tags:
+        - Verification
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - staffId
+                - method
+              properties:
+                staffId:
+                  type: string
+                method:
+                  type: string
+                  enum: [sms, email]
+                purpose:
+                  type: string
+                  example: "bank_details_update"
+      responses:
+        "200":
+          description: Verification code sent
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  verificationId:
+                    type: string
+                  expiresAt:
+                    type: string
+                    format: date-time
+                  maskedDestination:
+                    type: string
+                    example: "***7890"
+
+  /verification/verify-code:
+    post:
+      summary: Verify code
+      description: Verify 2FA code provided by user
+      operationId: verify_code
+      tags:
+        - Verification
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - verificationId
+                - code
+              properties:
+                verificationId:
+                  type: string
+                code:
+                  type: string
+                  pattern: '^\d{6}$'
+      responses:
+        "200":
+          description: Verification result
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  verified:
+                    type: boolean
+                  attemptsRemaining:
+                    type: integer
+
+  /audit/log:
+    post:
+      summary: Create audit log entry
+      description: Log transaction for compliance and audit trail
+      operationId: create_audit_log
+      tags:
+        - Audit
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - eventType
+                - staffId
+                - action
+              properties:
+                eventType:
+                  type: string
+                  enum:
+                    [
+                      personal_details_update,
+                      leave_request,
+                      leave_approval,
+                      absence_report,
+                      return_to_work,
+                    ]
+                staffId:
+                  type: string
+                performedBy:
+                  type: string
+                  description: User who performed action
+                action:
+                  type: string
+                  example: "Updated bank details"
+                details:
+                  type: object
+                  description: Additional details (sensitive data masked)
+                referenceNumber:
+                  type: string
+                ipAddress:
+                  type: string
+                  nullable: true
+      responses:
+        "201":
+          description: Audit log created
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  logId:
+                    type: string
+                  timestamp:
+                    type: string
+                    format: date-time
+
+  /reference/generate:
+    post:
+      summary: Generate reference number
+      description: Generate unique reference number for transactions
+      operationId: generate_reference_number
+      tags:
+        - Utilities
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - type
+              properties:
+                type:
+                  type: string
+                  enum: [bank_details, address, leave, absence, return_to_work]
+                  example: "leave"
+      responses:
+        "200":
+          description: Reference number generated
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  referenceNumber:
+                    type: string
+                    example: "AL-2026-05-19-0849"
+                  type:
+                    type: string
+                  generatedAt:
+                    type: string
+                    format: date-time
+
+  /calendar/schedule-meeting:
+    post:
+      summary: Schedule meeting
+      description: Schedule return-to-work or other HR meetings
+      operationId: schedule_meeting
+      tags:
+        - Calendar
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - attendees
+                - subject
+                - duration
+              properties:
+                attendees:
+                  type: array
+                  items:
+                    type: string
+                    format: email
+                subject:
+                  type: string
+                  example: "Return to Work Meeting"
+                description:
+                  type: string
+                  nullable: true
+                duration:
+                  type: integer
+                  description: Duration in minutes
+                  example: 30
+                preferredDate:
+                  type: string
+                  format: date
+                  nullable: true
+                preferredTime:
+                  type: string
+                  nullable: true
+                location:
+                  type: string
+                  nullable: true
+                meetingType:
+                  type: string
+                  enum: [in_person, teams, phone]
+                  default: in_person
+      responses:
+        "201":
+          description: Meeting scheduled
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  meetingId:
+                    type: string
+                  scheduledAt:
+                    type: string
+                    format: date-time
+                  meetingLink:
+                    type: string
+                    nullable: true
+
+  /occupational-health/check-referral-criteria:
+    post:
+      summary: Check OH referral criteria
+      description: Determine if Occupational Health referral is needed
+      operationId: check_oh_referral_criteria
+      tags:
+        - Occupational Health
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - staffId
+              properties:
+                staffId:
+                  type: string
+                absenceReason:
+                  type: string
+                  nullable: true
+                episodes:
+                  type: integer
+                  nullable: true
+                totalDays:
+                  type: integer
+                  nullable: true
+                workRelated:
+                  type: boolean
+                  default: false
+      responses:
+        "200":
+          description: OH referral assessment
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  referralRequired:
+                    type: boolean
+                  reason:
+                    type: string
+                  urgency:
+                    type: string
+                    enum: [routine, urgent, emergency]
+                  criteria:
+                    type: array
+                    items:
+                      type: string
+
+  /rota/update:
+    post:
+      summary: Update ward rota
+      description: Update rostering system with leave or absence
+      operationId: update_ward_rota
+      tags:
+        - Rostering
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - staffId
+                - departmentId
+                - updateType
+                - dates
+              properties:
+                staffId:
+                  type: string
+                departmentId:
+                  type: string
+                updateType:
+                  type: string
+                  enum: [leave, absence, return]
+                dates:
+                  type: array
+                  items:
+                    type: string
+                    format: date
+      responses:
+        "200":
+          description: Rota updated successfully
+
+components:
+  schemas:
+    Error:
+      type: object
+      properties:
+        error:
+          type: string
+        message:
+          type: string
+        timestamp:
+          type: string
+          format: date-time
+
+# Made with Bob

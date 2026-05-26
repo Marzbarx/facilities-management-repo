@@ -1,0 +1,207 @@
+openapi: 3.0.0
+info:
+  title: Facilities and Asset Management API
+  description: An API for a facilities coordinator to manage work orders, company assets, vendors, and employees.
+  version: "1.1.0"
+servers:
+  - url: https://facilities-management-api.onrender.com
+    description: Production API hosted on Render
+  - url: http://localhost:3000
+    description: Local development server
+paths:
+  /work_orders:
+    get:
+      summary: Get Work Orders by Coordinator ID
+      description: Retrieves a list of work orders assigned to a specific facilities coordinator.
+      operationId: get_work_orders_by_coordinator_id
+      parameters:
+        - name: coordinator_id
+          in: query
+          required: true
+          description: "The unique ID of the coordinator (e.g., KW-05)."
+          schema:
+            type: string
+      responses:
+        "200":
+          description: A list of work orders.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/WorkOrder"
+  /work_orders/{id}:
+    patch:
+      summary: Update a Work Order
+      description: Partially updates a work order's information, such as status, priority, or comments.
+      operationId: update_work_order
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: The unique ID of the work order to update.
+          schema:
+            type: integer
+      requestBody:
+        description: The fields to update on the work order.
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                Status:
+                  type: string
+                Priority:
+                  type: string
+                Assignee_ID:
+                  type: string
+                Comments:
+                  type: string
+      responses:
+        "200":
+          description: The work order was successfully updated.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/WorkOrder"
+  /asset_inventory:
+    get:
+      summary: Check Asset Details
+      description: Retrieves details for a specific asset using its Asset Tag.
+      operationId: check_asset_details
+      parameters:
+        - name: Asset_Tag
+          in: query
+          required: true
+          description: "The unique asset tag to search for (e.g., CM-F3-01)."
+          schema:
+            type: string
+      responses:
+        "200":
+          description: The asset's details.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Asset"
+  /vendor_database:
+    get:
+      summary: Find Vendor for Asset
+      description: Finds the approved vendor for a specific type of asset.
+      operationId: find_vendor_for_asset
+      parameters:
+        - name: Specialty
+          in: query
+          required: true
+          description: "The type of asset to find a vendor for (e.g., 'Coffee Machine')."
+          schema:
+            type: string
+      responses:
+        "200":
+          description: The vendor's details.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Vendor"
+  /employees:
+    get:
+      summary: Get Employee Report
+      description: Retrieves a list of company employees.
+      operationId: get_employee_report
+      responses:
+        "200":
+          description: A list of employees.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Employee"
+
+components:
+  schemas:
+    WorkOrder:
+      type: object
+      properties:
+        id:
+          type: integer
+        coordinator_id:
+          type: string
+          description: The facilities coordinator managing this work order
+        employee_id:
+          type: string
+          description: The employee who reported the issue
+        Asset_Tag:
+          type: string
+          description: Reference to the asset involved in this work order
+        Vendor_ID:
+          type: string
+          description: Reference to the approved vendor for this asset type
+        Issue_Date:
+          type: string
+          description: Date when the issue was reported (ISO format or YYYY-MM-DD)
+        Asset_Type:
+          type: string
+          description: Type of asset involved in the work order
+        Location:
+          type: string
+          description: Physical location of the issue
+        Problem_Summary:
+          type: string
+          description: Brief summary of the problem
+        Status:
+          type: string
+          description: Current status (Open, In Progress, Completed)
+        Priority:
+          type: string
+          description: Priority level (High, Medium, Low)
+        Assignee_ID:
+          type: string
+          description: The technician assigned to this work order
+        Description:
+          type: string
+          description: Detailed description of the issue
+        Comments:
+          type: string
+          description: Additional notes or updates
+    Asset:
+      type: object
+      properties:
+        Asset_Tag:
+          type: string
+        Asset_Type:
+          type: string
+        Model:
+          type: string
+        Purchase_Date:
+          type: string
+        Warranty_Expiry:
+          type: string
+        Status:
+          type: string
+    Vendor:
+      type: object
+      properties:
+        Vendor_ID:
+          type: string
+        Vendor_Name:
+          type: string
+        Specialty:
+          type: string
+        Contact:
+          type: string
+    Employee:
+      type: object
+      properties:
+        employee_id:
+          type: string
+        FullName:
+          type: string
+        Email:
+          type: string
+        Department:
+          type: string
