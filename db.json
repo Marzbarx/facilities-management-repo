@@ -6,11 +6,11 @@
       "employee_id": "EMP-001",
       "Asset_Tag": "CM-F3-01",
       "Vendor_ID": "V-001",
-      "Status": "Open",
+      "Status": "In Progress",
       "Priority": "Low",
       "Assignee_ID": "TECH-01",
       "Description": "Coffee machine in break room not working",
-      "Comments": "Reported by employee, needs immediate attention"
+      "Comments": "Testing API - Technician assigned"
     },
     {
       "id": "2",
