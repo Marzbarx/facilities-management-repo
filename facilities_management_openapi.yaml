@@ -4,7 +4,7 @@ info:
   description: An API for a facilities coordinator to manage work orders, company assets, vendors, and employees.
   version: "1.1.0"
 servers:
-  - url: https://facilities-management-api.onrender.com
+  - url: https://facilities-management-api.g9h3git .onrender.com
     description: Production API hosted on Render
   - url: http://localhost:3000
     description: Local development server
